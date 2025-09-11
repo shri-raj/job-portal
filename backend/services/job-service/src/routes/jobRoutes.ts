@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { createJob, listJobs } from "../controllers/jobController";
+import {
+  createJob,
+  listJobs,
+  updateJob,
+  deleteJob,
+} from "../controllers/jobController";
 import {
   applyForJob,
   getJobApplications,
@@ -11,21 +16,29 @@ import {
 
 const router = Router();
 
-// --- Job Routes ---
-// Protect the createJob route: only users with 'recruiter' role can access it.
+// --- Job Routes (CRUD for recruiters) ---
 router.post("/jobs", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
-// listJobs can remain public
-router.get("/jobs", listJobs);
+router.get("/jobs", listJobs); // Public search/filter endpoint
+router.put(
+  "/jobs/:jobId",
+  verifyTokenMiddleware,
+  hasRole(["recruiter"]),
+  updateJob
+);
+router.delete(
+  "/jobs/:jobId",
+  verifyTokenMiddleware,
+  hasRole(["recruiter"]),
+  deleteJob
+);
 
 // --- Application Routes ---
-// Any authenticated user ('user' or 'recruiter') can apply for a job.
 router.post(
   "/jobs/:jobId/apply",
   verifyTokenMiddleware,
   hasRole(["user", "recruiter"]),
   applyForJob
 );
-// Only recruiters can see who applied for a job.
 router.get(
   "/jobs/:jobId/applications",
   verifyTokenMiddleware,

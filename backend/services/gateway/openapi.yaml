@@ -1,0 +1,13 @@
+openapi: 3.0.0
+info:
+  title: Job Portal Gateway
+  version: 0.1.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /api/jobs:
+    get:
+      summary: List jobs via job service
+      responses:
+        "200":
+          description: OK

@@ -1,8 +1,12 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import prisma from '../../../prisma/client';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../../../prisma/client";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme';
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in the environment variables");
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function hashPassword(pw: string) {
   return bcrypt.hash(pw, 10);
@@ -13,7 +17,7 @@ export async function comparePassword(pw: string, hash: string) {
 }
 
 export function signToken(payload: object) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 }
 
 export function verifyToken(token: string) {

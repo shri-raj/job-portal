@@ -7,9 +7,12 @@ const jobSchema = z.object({
   company: z.string().min(1),
   location: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  postedBy: z.string().min(1), // Now expects the recruiter's user ID
 });
 
-export async function createJob(data: unknown) {
+type JobData = z.infer<typeof jobSchema>;
+
+export async function createJob(data: JobData) {
   const parsed = jobSchema.safeParse(data);
   if (!parsed.success) {
     const validation = parsed.error.issues.map((issue) => ({
@@ -25,7 +28,6 @@ export async function createJob(data: unknown) {
     data: {
       ...parsed.data,
       location: parsed.data.location ?? "Unknown",
-      postedBy: parsed.data.company,
     },
   });
   return job;

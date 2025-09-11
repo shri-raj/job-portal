@@ -1,9 +1,12 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import * as jobService from "../services/jobService";
+import { AuthenticatedRequest } from "../../../../libs/auth/middleware";
 
-export async function createJob(req: Request, res: Response) {
+export async function createJob(req: AuthenticatedRequest, res: Response) {
   try {
-    const job = await jobService.createJob(req.body);
+    const userId = req.user.sub; // Get recruiter's ID from token
+    const jobData = { ...req.body, postedBy: userId };
+    const job = await jobService.createJob(jobData);
     return res.status(201).json(job);
   } catch (err: any) {
     if (err?.validation) {
@@ -13,7 +16,7 @@ export async function createJob(req: Request, res: Response) {
   }
 }
 
-export async function listJobs(req: Request, res: Response) {
+export async function listJobs(req: AuthenticatedRequest, res: Response) {
   try {
     const jobs = await jobService.listJobs();
     return res.json(jobs);

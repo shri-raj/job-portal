@@ -3,8 +3,11 @@ import { morganMiddleware, logger } from "../../../libs/logger";
 import dotenv from "dotenv";
 import jobRouter from "./routes/jobRoutes";
 
-dotenv.config();
-
+import path from "path";
+dotenv.config({
+  path: path.resolve(__dirname, "../.env"),
+  override: true,
+});
 const app = express();
 app.use(express.json());
 app.use(morganMiddleware);

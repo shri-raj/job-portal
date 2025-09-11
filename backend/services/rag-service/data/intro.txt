@@ -1,5 +1,0 @@
-This dataset contains sample company and job descriptions for the job portal.
-
-ACME Corp is a multinational company specializing in road runner catching gadgets.
-
-We offer software engineering roles with focus on backend systems, Node.js, and distributed microservices.

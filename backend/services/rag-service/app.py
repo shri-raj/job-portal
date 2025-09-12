@@ -1,9 +1,28 @@
 import os
 from flask import Flask, jsonify, request
+from dotenv import load_dotenv
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# Load small dataset into memory from the data directory
+endpoint = "https://models.github.ai/inference"
+model = "openai/gpt-4"
+token = os.environ.get("GITHUB_TOKEN")
+
+client = None
+if token:
+    try:
+        client = ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=AzureKeyCredential(token),
+        )
+    except Exception as e:
+        print(f"Failed to initialize ChatCompletionsClient: {e}")
+
 documents = []
 data_path = os.environ.get("RAG_DATA_PATH", "./data")
 if os.path.exists(data_path):
@@ -22,7 +41,7 @@ def retrieve():
     k = data.get("k", 3)
 
     if not query:
-        return jsonify({"error": "query required"}), 400
+        return jsonify({"error": "query is required"}), 400
 
     terms = query.lower().split()
     scored = []
@@ -36,20 +55,50 @@ def retrieve():
 
 @app.route("/qa", methods=["POST"])
 def qa():
+    if not client:
+        return jsonify({"error": "RAG service is not configured with an API token."}), 500
+
     data = request.get_json()
     question = data.get("question")
 
     if not question:
-        return jsonify({"error": "question required"}), 400
+        return jsonify({"error": "question is required"}), 400
 
     terms = question.lower().split()
-    matched = [doc for doc in documents if any(term in doc["text"].lower() for term in terms)][:3]
+    matched_docs = [doc for doc in documents if any(term in doc["text"].lower() for term in terms)][:3]
 
-    if not matched:
-        return jsonify({"answer": "No relevant documents found.", "sources": []})
+    if not matched_docs:
+        return jsonify({"answer": "I couldn't find any relevant documents to answer that question.", "sources": []})
 
-    answer = "\n\n".join([f"From {m['id']}: {m['text'][:200]}" for m in matched])
-    return jsonify({"answer": answer, "sources": [m["id"] for m in matched]})
+    context = "\n\n".join([f"Source ({doc['id']}):\n{doc['text']}" for doc in matched_docs])
+    prompt = f"""
+    Based on the following context, please answer the user's question.
+    If the context does not contain the answer, say that you don't know.
+
+    Context:
+    ---
+    {context}
+    ---
+    Question: {question}
+    """
+
+    try:
+        response = client.complete(
+            messages=[
+                SystemMessage("You are a helpful assistant for a job portal. Your goal is to answer questions based on the provided context about job descriptions and related topics."),
+                UserMessage(prompt),
+            ],
+            model=model,
+            temperature=0.7,
+            top_p=1.0,
+        )
+        answer = response.choices[0].message.content
+        sources = [doc["id"] for doc in matched_docs]
+        return jsonify({"answer": answer, "sources": sources})
+    except Exception as e:
+        print(f"Error calling the model: {e}")
+        return jsonify({"error": "Failed to get a response from the AI model."}), 500
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 4004))

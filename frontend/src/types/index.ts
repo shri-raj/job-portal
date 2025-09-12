@@ -6,11 +6,27 @@ export interface User {
   createdAt: string;
 }
 
+export interface Profile {
+  id: string;
+  resumeUrl?: string;
+  summary?: string;
+  skills: string[];
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  description: string;
+  website?: string;
+  location: string;
+  jobs?: Job[];
+}
+
 export interface Job {
   id: string;
   title: string;
   description: string;
-  company: string;
+  company: Company;
   location: string;
   tags: string[];
   createdAt: string;
@@ -24,7 +40,7 @@ export interface Application {
   appliedAt: string;
   job?: {
     title: string;
-    company: string;
+    company: Company;
     location: string;
   };
   user?: {

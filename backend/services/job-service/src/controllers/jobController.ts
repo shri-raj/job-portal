@@ -16,7 +16,6 @@ export async function createJob(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-// NEW CONTROLLER: Update a job
 export async function updateJob(req: AuthenticatedRequest, res: Response) {
   try {
     const { jobId } = req.params;
@@ -31,7 +30,6 @@ export async function updateJob(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-// NEW CONTROLLER: Delete a job
 export async function deleteJob(req: AuthenticatedRequest, res: Response) {
   try {
     const { jobId } = req.params;
@@ -46,7 +44,6 @@ export async function deleteJob(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-// MODIFIED: listJobs now handles query parameters for filtering
 export async function listJobs(req: Request, res: Response) {
   try {
     const { q, location, tags } = req.query;

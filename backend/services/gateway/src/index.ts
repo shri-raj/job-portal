@@ -19,6 +19,7 @@ const AUTH_SERVICE_URL =
 const USER_SERVICE_URL =
   process.env.USER_SERVICE_URL || "http://localhost:4002";
 const JOB_SERVICE_URL = process.env.JOB_SERVICE_URL || "http://localhost:4003";
+const RAG_SERVICE_URL = process.env.RAG_SERVICE_URL || "http://localhost:4004"; // Add this line
 
 app.get("/health", (req, res) => res.json({ ok: true, service: "gateway" }));
 
@@ -36,7 +37,7 @@ app.use(
   createProxyMiddleware({
     target: USER_SERVICE_URL,
     changeOrigin: true,
-    pathRewrite: { "^/api": "" },
+    pathRewrite: { "^/api/users": "" },
   })
 );
 
@@ -47,6 +48,17 @@ app.use(
     changeOrigin: true,
     pathRewrite: {
       "^/api/jobs": "",
+    },
+  })
+);
+
+app.use(
+  "/api/rag",
+  createProxyMiddleware({
+    target: RAG_SERVICE_URL,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/rag": "",
     },
   })
 );

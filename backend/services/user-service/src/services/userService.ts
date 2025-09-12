@@ -12,18 +12,14 @@ export async function findUserById(id: string) {
   };
 }
 
-// New function to get a user's applications
 export async function findUserApplications(userId: string) {
   return prisma.application.findMany({
     where: { userId },
     orderBy: { appliedAt: "desc" },
     include: {
       job: {
-        // Include job details in the response
-        select: {
-          title: true,
+        include: {
           company: true,
-          location: true,
         },
       },
     },

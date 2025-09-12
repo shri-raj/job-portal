@@ -4,7 +4,7 @@ import { z } from "zod";
 const jobSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  company: z.string().min(1),
+  companyId: z.string().min(1),
   location: z.string().optional(),
   tags: z.array(z.string()).optional(),
   postedBy: z.string().min(1),
@@ -78,7 +78,7 @@ export async function listJobs(filters: {
     where.OR = [
       { title: { contains: q, mode: "insensitive" } },
       { description: { contains: q, mode: "insensitive" } },
-      { company: { contains: q, mode: "insensitive" } },
+      { company: { name: { contains: q, mode: "insensitive" } } },
     ];
   }
 
@@ -92,6 +92,7 @@ export async function listJobs(filters: {
 
   return prisma.job.findMany({
     where,
+    include: { company: true },
     orderBy: { createdAt: "desc" },
   });
 }

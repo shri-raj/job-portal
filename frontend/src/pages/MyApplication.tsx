@@ -58,7 +58,8 @@ const MyApplications: React.FC = () => {
                                 </h3>
                                 <div className="flex items-center text-gray-600 mb-2">
                                     <Building className="h-4 w-4 mr-2" />
-                                    <span>{application.job?.company}</span>
+                                    {/* Safely access the nested company name */}
+                                    <span>{application.job?.company?.name}</span>
                                 </div>
                                 <div className="flex items-center text-gray-600 mb-2">
                                     <MapPin className="h-4 w-4 mr-2" />

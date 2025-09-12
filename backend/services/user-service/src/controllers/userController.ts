@@ -13,13 +13,12 @@ export async function getUser(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-// New controller to get the logged-in user's applications
 export async function getMyApplications(
   req: AuthenticatedRequest,
   res: Response
 ) {
   try {
-    const userId = req.user.sub; // Get user ID from their own token
+    const userId = req.user.sub;
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
     }

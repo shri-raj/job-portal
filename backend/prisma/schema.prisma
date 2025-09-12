@@ -15,18 +15,38 @@ model User {
   roles        String[]
   createdAt    DateTime      @default(now())
   applications Application[]
+  profile      Profile?      @relation(fields: [profileId], references: [id])
+  profileId    String?       @unique @db.ObjectId
+}
+
+model Profile {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  user        User?
+  resumeUrl   String?
+  summary     String?
+  skills      String[]
+}
+
+model Company {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  name        String   @unique
+  description String
+  website     String?
+  location    String
+  jobs        Job[]
 }
 
 model Job {
   id           String        @id @map("_id") @default(auto()) @db.ObjectId
   title        String
   description  String
-  company      String
   location     String
   tags         String[]
   postedBy     String        @db.ObjectId
   createdAt    DateTime      @default(now())
   applications Application[]
+  company      Company       @relation(fields: [companyId], references: [id])
+  companyId    String        @db.ObjectId
 }
 
 model Application {

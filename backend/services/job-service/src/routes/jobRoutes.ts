@@ -13,8 +13,22 @@ import {
   verifyTokenMiddleware,
   hasRole,
 } from "../../../../libs/auth/middleware";
+import {
+  createCompany,
+  getCompany,
+  listCompanies,
+} from "../controllers/companyController";
 
 const router = Router();
+
+router.post(
+  "/companies",
+  verifyTokenMiddleware,
+  hasRole(["recruiter"]),
+  createCompany
+);
+router.get("/companies", listCompanies);
+router.get("/companies/:id", getCompany);
 
 router.post("/", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
 router.get("/", listJobs);

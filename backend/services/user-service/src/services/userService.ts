@@ -18,10 +18,8 @@ export async function findUserApplications(userId: string) {
     orderBy: { appliedAt: "desc" },
     include: {
       job: {
-        select: {
-          title: true,
+        include: {
           company: true,
-          location: true,
         },
       },
     },

@@ -14,7 +14,7 @@ const AskAI: React.FC = () => {
 
     const { mutate, isPending, error } = useMutation<QAResponse, Error, string>({
         mutationFn: async (newQuestion: string) => {
-            const { data } = await api.post('/api/rag/qa', { question: newQuestion });
+            const { data } = await api.post('/rag/qa', { question: newQuestion });
             return data;
         },
         onSuccess: (data) => {

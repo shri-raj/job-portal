@@ -39,7 +39,7 @@ app.use(
     target: USER_SERVICE_URL,
     changeOrigin: true,
     pathRewrite: {
-      "^/api": "",
+      "^/api/users": "",
     },
   })
 );
@@ -50,7 +50,7 @@ app.use(
     target: JOB_SERVICE_URL,
     changeOrigin: true,
     pathRewrite: {
-      "^/api": "",
+      "^/api/jobs/?": "/jobs/",
     },
   })
 );

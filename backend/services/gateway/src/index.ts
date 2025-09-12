@@ -3,6 +3,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { morganMiddleware, logger } from "../../../libs/logger";
 import dotenv from "dotenv";
 import path from "path";
+import cors from "cors";
 
 dotenv.config({
   path: path.resolve(__dirname, "../.env"),
@@ -10,6 +11,7 @@ dotenv.config({
 });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(morganMiddleware);
 

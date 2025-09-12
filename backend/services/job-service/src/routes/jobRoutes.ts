@@ -17,14 +17,9 @@ import {
 const router = Router();
 
 // --- Job Routes (CRUD for recruiters) ---
-router.post("/jobs", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
-router.get("/jobs", listJobs); // Public search/filter endpoint
-router.put(
-  "/jobs/:jobId",
-  verifyTokenMiddleware,
-  hasRole(["recruiter"]),
-  updateJob
-);
+router.post("/", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
+router.get("/", listJobs); // Public search/filter endpoint
+router.put("/:jobId", verifyTokenMiddleware, hasRole(["recruiter"]), updateJob);
 router.delete(
   "/jobs/:jobId",
   verifyTokenMiddleware,
@@ -34,13 +29,13 @@ router.delete(
 
 // --- Application Routes ---
 router.post(
-  "/jobs/:jobId/apply",
+  "/:jobId/apply",
   verifyTokenMiddleware,
   hasRole(["user", "recruiter"]),
   applyForJob
 );
 router.get(
-  "/jobs/:jobId/applications",
+  "/:jobId/applications",
   verifyTokenMiddleware,
   hasRole(["recruiter"]),
   getJobApplications

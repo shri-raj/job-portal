@@ -1,67 +1,132 @@
-import { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
-import api from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api';
+import { useAuth } from '../contexts/AuthContext';
+import type { User } from '../types';
 
-const Register = () => {
+const Register: React.FC = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isRecruiter, setIsRecruiter] = useState(false);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
         try {
-            const { data } = await api.post("/auth/register", {
-                name,
-                email,
-                password,
-            });
-            login(data.token);
-            navigate("/");
-        } catch (err) {
-            setError("Registration failed");
+            const roles = isRecruiter ? ['recruiter'] : ['user'];
+            const { data } = await api.post('/auth/register', { name, email, password, roles });
+
+            const tokenPayload = JSON.parse(atob(data.token.split('.')[1]));
+            const user: User = {
+                id: tokenPayload.sub,
+                name: data.user?.name || name,
+                email: data.user?.email || email,
+                roles: data.user?.roles || roles,
+                createdAt: new Date().toISOString(),
+            };
+
+            login(data.token, user);
+            navigate('/');
+        } catch (err: any) {
+            setError(err.response?.data?.error || 'Registration failed');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Register</h1>
-            {error && <p className="text-red-500">{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label>Name</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="border p-2 w-full"
-                    />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Create your account
+                    </h2>
                 </div>
-                <div className="mb-4">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="border p-2 w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="border p-2 w-full"
-                    />
-                </div>
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-                    Register
-                </button>
-            </form>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            {error}
+                        </div>
+                    )}
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Full Name
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email address
+                            </label>
+                            <input
+                                id="email"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Password
+                            </label>
+                            <input
+                                id="password"
+                                type="password"
+                                required
+                                minLength={6}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div className="flex items-center">
+                            <input
+                                id="recruiter"
+                                type="checkbox"
+                                checked={isRecruiter}
+                                onChange={(e) => setIsRecruiter(e.target.checked)}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label htmlFor="recruiter" className="ml-2 block text-sm text-gray-900">
+                                I am a recruiter/employer
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                        >
+                            {isLoading ? 'Creating account...' : 'Create account'}
+                        </button>
+                    </div>
+
+                    <div className="text-center">
+                        <Link to="/login" className="text-blue-600 hover:text-blue-500">
+                            Already have an account? Sign in
+                        </Link>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

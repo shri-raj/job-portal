@@ -1,16 +1,18 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ children, roles }) => {
+    const { auth } = useAuth();
 
-const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuth();
-
-    if (!isAuthenticated) {
-        // If not authenticated, redirect to the login page
+    if (!auth.isAuthenticated) {
         return <Navigate to="/login" />;
     }
 
-    // If authenticated, render the child routes
-    return <Outlet />;
+    if (roles && auth.user && !roles.some(role => auth.user!.roles.includes(role))) {
+        return <div className="p-8 text-center text-red-600">Access denied. Insufficient permissions.</div>;
+    }
+
+    return <>{children}</>;
 };
 
 export default ProtectedRoute;

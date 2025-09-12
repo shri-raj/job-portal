@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import * as jobService from "../services/jobService";
 import { AuthenticatedRequest } from "../../../../libs/auth/middleware";
 
@@ -47,7 +47,7 @@ export async function deleteJob(req: AuthenticatedRequest, res: Response) {
 }
 
 // MODIFIED: listJobs now handles query parameters for filtering
-export async function listJobs(req: AuthenticatedRequest, res: Response) {
+export async function listJobs(req: Request, res: Response) {
   try {
     const { q, location, tags } = req.query;
 

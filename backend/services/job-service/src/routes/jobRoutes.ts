@@ -16,18 +16,16 @@ import {
 
 const router = Router();
 
-// --- Job Routes (CRUD for recruiters) ---
 router.post("/", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
 router.get("/", listJobs); // Public search/filter endpoint
 router.put("/:jobId", verifyTokenMiddleware, hasRole(["recruiter"]), updateJob);
 router.delete(
-  "/jobs/:jobId",
+  "/:jobId",
   verifyTokenMiddleware,
   hasRole(["recruiter"]),
   deleteJob
 );
 
-// --- Application Routes ---
 router.post(
   "/:jobId/apply",
   verifyTokenMiddleware,

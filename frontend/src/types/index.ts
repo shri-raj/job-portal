@@ -28,6 +28,7 @@ export interface Application {
     location: string;
   };
   user?: {
+    id: string;
     name: string;
     email: string;
   };

@@ -7,6 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MyApplications from "./pages/MyApplication";
 import CreateJob from "./pages/CreateJob";
 import MyJobs from "./pages/MyJobs";
+import JobApplications from "./pages/JobApplications";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
   return (
@@ -37,6 +39,22 @@ function App() {
           element={
             <ProtectedRoute roles={['recruiter']}>
               <MyJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/jobs/:jobId/applications"
+          element={
+            <ProtectedRoute roles={['recruiter']}>
+              <JobApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
             </ProtectedRoute>
           }
         />

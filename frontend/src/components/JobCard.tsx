@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Building, Calendar, MapPin, Edit, Trash2 } from 'lucide-react';
+import { Building, Calendar, MapPin, Edit, Trash2, Users } from 'lucide-react';
 import type { Job } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 interface JobCardProps {
     job: Job;
@@ -45,6 +46,13 @@ const JobCard: React.FC<JobCardProps> = ({ job, onApply, showActions = false, on
                 </div>
                 {showActions && auth.user?.roles.includes('recruiter') && (
                     <div className="flex space-x-2">
+                        <Link
+                            to={`/jobs/${job.id}/applications`}
+                            className="text-green-600 hover:text-green-800 text-sm font-medium flex items-center space-x-1"
+                        >
+                            <Users className="h-4 w-4" />
+                            <span>View Applications</span>
+                        </Link>
                         <button
                             onClick={() => onEdit?.(job)}
                             className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"

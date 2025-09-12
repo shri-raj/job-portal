@@ -11,7 +11,7 @@ const JobApplications: React.FC = () => {
     const { data: applications, isLoading, error } = useQuery<Application[]>({
         queryKey: ['job-applications', jobId],
         queryFn: async () => {
-            const { data } = await api.get(`/api/jobs/${jobId}/applications`);
+            const { data } = await api.get(`/jobs/${jobId}/applications`);
             return data;
         },
     });

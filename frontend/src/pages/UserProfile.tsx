@@ -11,7 +11,7 @@ const UserProfile: React.FC = () => {
     const { data: user, isLoading, error } = useQuery<User>({
         queryKey: ['user', userId],
         queryFn: async () => {
-            const { data } = await api.get(`/api/users/${userId}`);
+            const { data } = await api.get(`/users/${userId}`);
             return data;
         },
     });

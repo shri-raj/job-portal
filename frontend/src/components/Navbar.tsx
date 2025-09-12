@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Briefcase, LogOut, Menu, X } from 'lucide-react';
+import { Briefcase, LogOut, Menu, X, UserCircle } from 'lucide-react';
 
 const Navbar: React.FC = () => {
     const { auth, logout } = useAuth();
@@ -10,45 +10,64 @@ const Navbar: React.FC = () => {
 
     const handleLogout = () => {
         logout();
+        setIsMenuOpen(false);
         navigate('/login');
     };
 
+    const activeLinkStyle = {
+        color: '#ffffff',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    };
+
+    const navLinkClass = "px-3 py-2 rounded-md text-sm font-medium text-blue-100 hover:bg-white hover:bg-opacity-10 transition-colors";
+
     return (
-        <nav className="bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-lg">
+        <nav className="bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-lg sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <Link to="/" className="flex items-center space-x-2 text-xl font-bold">
-                        <Briefcase className="h-6 w-6" />
-                        <span>JobPortal</span>
-                    </Link>
+                    {/* Logo and Main Nav Links */}
+                    <div className="flex items-center space-x-8">
+                        <Link to="/" className="flex items-center space-x-2 text-xl font-bold">
+                            <Briefcase className="h-6 w-6" />
+                            <span>JobPortal</span>
+                        </Link>
+                        <div className="hidden md:flex items-center space-x-2">
+                            <NavLink to="/" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>Jobs</NavLink>
+                            {auth.isAuthenticated && (
+                                <>
+                                    <NavLink to="/my-applications" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>My Applications</NavLink>
+                                    {auth.user?.roles.includes('recruiter') && (
+                                        <>
+                                            <NavLink to="/create-job" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>Post Job</NavLink>
+                                            <NavLink to="/my-jobs" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>My Jobs</NavLink>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-6">
+                    {/* User Info and Auth Actions */}
+                    <div className="hidden md:flex items-center space-x-4">
                         {auth.isAuthenticated ? (
                             <>
-                                <Link to="/" className="hover:text-blue-200 transition-colors">Jobs</Link>
-                                <Link to="/my-applications" className="hover:text-blue-200 transition-colors">My Applications</Link>
-                                {auth.user?.roles.includes('recruiter') && (
-                                    <>
-                                        <Link to="/create-job" className="hover:text-blue-200 transition-colors">Post Job</Link>
-                                        <Link to="/my-jobs" className="hover:text-blue-200 transition-colors">My Jobs</Link>
-                                    </>
-                                )}
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-blue-200">Welcome, {auth.user?.name}</span>
-                                    <button onClick={handleLogout} className="flex items-center space-x-1 hover:text-blue-200 transition-colors">
-                                        <LogOut className="h-4 w-4" />
-                                        <span>Logout</span>
-                                    </button>
+                                <div className="flex items-center space-x-2">
+                                    <UserCircle className="h-5 w-5 text-blue-200" />
+                                    <span className="text-blue-100 text-sm">Welcome, {auth.user?.name}</span>
                                 </div>
+                                <button onClick={handleLogout} className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-blue-100 hover:bg-white hover:bg-opacity-10 transition-colors">
+                                    <LogOut className="h-4 w-4" />
+                                    <span>Logout</span>
+                                </button>
                             </>
                         ) : (
-                            <div className="space-x-4">
-                                <Link to="/login" className="hover:text-blue-200 transition-colors">Login</Link>
-                                <Link to="/register" className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors">Register</Link>
+                            <div className="space-x-2">
+                                <NavLink to="/login" className={navLinkClass}>Login</NavLink>
+                                <NavLink to="/register" className="bg-white text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-50 transition-colors">Register</NavLink>
                             </div>
                         )}
                     </div>
+
 
                     {/* Mobile Menu Button */}
                     <button
@@ -61,26 +80,26 @@ const Navbar: React.FC = () => {
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <div className="md:hidden py-4 border-t border-blue-500">
+                    <div className="md:hidden py-4 border-t border-blue-500 space-y-2">
                         {auth.isAuthenticated ? (
-                            <div className="space-y-2">
-                                <Link to="/" className="block hover:text-blue-200 transition-colors">Jobs</Link>
-                                <Link to="/my-applications" className="block hover:text-blue-200 transition-colors">My Applications</Link>
+                            <>
+                                <NavLink to="/" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Jobs</NavLink>
+                                <NavLink to="/my-applications" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>My Applications</NavLink>
                                 {auth.user?.roles.includes('recruiter') && (
                                     <>
-                                        <Link to="/create-job" className="block hover:text-blue-200 transition-colors">Post Job</Link>
-                                        <Link to="/my-jobs" className="block hover:text-blue-200 transition-colors">My Jobs</Link>
+                                        <NavLink to="/create-job" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Post Job</NavLink>
+                                        <NavLink to="/my-jobs" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>My Jobs</NavLink>
                                     </>
                                 )}
-                                <button onClick={handleLogout} className="block w-full text-left hover:text-blue-200 transition-colors">
+                                <button onClick={handleLogout} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium">
                                     Logout
                                 </button>
-                            </div>
+                            </>
                         ) : (
-                            <div className="space-y-2">
-                                <Link to="/login" className="block hover:text-blue-200 transition-colors">Login</Link>
-                                <Link to="/register" className="block hover:text-blue-200 transition-colors">Register</Link>
-                            </div>
+                            <>
+                                <NavLink to="/login" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Login</NavLink>
+                                <NavLink to="/register" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Register</NavLink>
+                            </>
                         )}
                     </div>
                 )}

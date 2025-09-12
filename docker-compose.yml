@@ -1,0 +1,109 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - job-portal-net
+
+  gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.node
+    container_name: gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - AUTH_SERVICE_URL=http://auth-service:4001
+      - USER_SERVICE_URL=http://user-service:4002
+      - JOB_SERVICE_URL=http://job-service:4003
+      - RAG_SERVICE_URL=http://rag-service:4004
+    depends_on:
+      - auth-service
+      - user-service
+      - job-service
+      - rag-service
+    networks:
+      - job-portal-net
+
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.node
+    container_name: auth-service
+    command: yarn workspace auth-service dev
+    environment:
+      - PORT=4001
+      - MONGO_URI=mongodb://mongo:27017/job_portal
+      - JWT_SECRET=changeme
+    depends_on:
+      - mongo
+    networks:
+      - job-portal-net
+
+  user-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.node
+    container_name: user-service
+    command: yarn workspace user-service dev
+    environment:
+      - PORT=4002
+      - MONGO_URI=mongodb://mongo:27017/job_portal
+    depends_on:
+      - mongo
+    networks:
+      - job-portal-net
+
+  job-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.node
+    container_name: job-service
+    command: yarn workspace job-service dev
+    environment:
+      - PORT=4003
+      - MONGO_URI=mongodb://mongo:27017/job_portal
+    depends_on:
+      - mongo
+    networks:
+      - job-portal-net
+
+  rag-service:
+    build:
+      context: ./backend/services/rag-service
+      dockerfile: Dockerfile.python
+    container_name: rag-service
+    environment:
+      - PORT=4004
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - JOB_SERVICE_URL=http://job-service:4003
+    networks:
+      - job-portal-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:4000
+    depends_on:
+      - gateway
+    networks:
+      - job-portal-net
+
+volumes:
+  mongo-data:
+
+networks:
+  job-portal-net:
+    driver: bridge

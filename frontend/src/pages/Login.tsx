@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const { login } = useAuth();
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -13,6 +15,7 @@ const Login = () => {
         try {
             const { data } = await api.post("/auth/login", { email, password });
             login(data.token);
+            navigate("/");
         } catch (err) {
             setError("Invalid credentials");
         }

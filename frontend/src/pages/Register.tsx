@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const { login } = useAuth();
+    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -18,6 +20,7 @@ const Register = () => {
                 password,
             });
             login(data.token);
+            navigate("/");
         } catch (err) {
             setError("Registration failed");
         }

@@ -12,7 +12,6 @@ dotenv.config({
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 app.use(morganMiddleware);
 
 const AUTH_SERVICE_URL =
@@ -28,7 +27,9 @@ app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
     changeOrigin: true,
-    pathRewrite: { "^/api/auth": "" },
+    pathRewrite: {
+      "^/api/auth": "",
+    },
   })
 );
 
@@ -37,7 +38,9 @@ app.use(
   createProxyMiddleware({
     target: USER_SERVICE_URL,
     changeOrigin: true,
-    pathRewrite: { "^/api/users": "/users" },
+    pathRewrite: {
+      "^/api": "",
+    },
   })
 );
 
@@ -46,7 +49,9 @@ app.use(
   createProxyMiddleware({
     target: JOB_SERVICE_URL,
     changeOrigin: true,
-    pathRewrite: { "^/api/jobs": "/jobs" },
+    pathRewrite: {
+      "^/api": "",
+    },
   })
 );
 

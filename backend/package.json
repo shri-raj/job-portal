@@ -20,7 +20,7 @@
   },
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn workspace gateway dev\" \"yarn workspace auth-service dev\" \"yarn workspace user-service dev\" \"yarn workspace job-service dev\" \"python3 services/rag-service/app.py\"",
+    "dev": "concurrently --names 'GATEWAY,AUTH,USER,JOB,RAG' -p 'name' --prefix-colors 'bgBlue,bgMagenta,bgGreen,bgCyan,bgYellow' \"yarn workspace gateway dev\" \"yarn workspace auth-service dev\" \"yarn workspace user-service dev\" \"yarn workspace job-service dev\" \"python3 services/rag-service/app.py\"",
     "start": "node dist/index.js"
   }
 }

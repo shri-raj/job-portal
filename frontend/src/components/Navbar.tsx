@@ -35,6 +35,7 @@ const Navbar: React.FC = () => {
                             <NavLink to="/" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>Jobs</NavLink>
                             {auth.isAuthenticated && (
                                 <>
+                                    <NavLink to="/ask-ai" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>Ask AI</NavLink>
                                     <NavLink to="/my-applications" className={navLinkClass} style={({ isActive }) => isActive ? activeLinkStyle : {}}>My Applications</NavLink>
                                     {auth.user?.roles.includes('recruiter') && (
                                         <>
@@ -53,7 +54,7 @@ const Navbar: React.FC = () => {
                             <>
                                 <div className="flex items-center space-x-2">
                                     <UserCircle className="h-5 w-5 text-blue-200" />
-                                    <span className="text-blue-100 text-sm">Welcome, {auth.user?.name}</span>
+                                    <span className="text-blue-100 text-sm">Welcome {auth.user?.name}</span>
                                 </div>
                                 <button onClick={handleLogout} className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-blue-100 hover:bg-white hover:bg-opacity-10 transition-colors">
                                     <LogOut className="h-4 w-4" />
@@ -84,6 +85,7 @@ const Navbar: React.FC = () => {
                         {auth.isAuthenticated ? (
                             <>
                                 <NavLink to="/" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Jobs</NavLink>
+                                <NavLink to="/ask-ai" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>Ask AI</NavLink>
                                 <NavLink to="/my-applications" className="block px-3 py-2 rounded-md text-base font-medium" onClick={() => setIsMenuOpen(false)}>My Applications</NavLink>
                                 {auth.user?.roles.includes('recruiter') && (
                                     <>

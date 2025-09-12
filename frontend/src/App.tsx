@@ -9,6 +9,7 @@ import CreateJob from "./pages/CreateJob";
 import MyJobs from "./pages/MyJobs";
 import JobApplications from "./pages/JobApplications";
 import UserProfile from "./pages/UserProfile";
+import AskAI from "./pages/AskAI";
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
           element={
             <ProtectedRoute>
               <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ask-ai"
+          element={
+            <ProtectedRoute>
+              <AskAI />
             </ProtectedRoute>
           }
         />

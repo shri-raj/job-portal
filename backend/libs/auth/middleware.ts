@@ -3,15 +3,10 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
 
-// Define a custom Request type to include the user payload from the token
 export interface AuthenticatedRequest extends Request {
   user?: any;
 }
 
-/**
- * Middleware to verify a JWT token from the Authorization header.
- * It attaches the decoded user payload to the request object.
- */
 export function verifyTokenMiddleware(
   req: AuthenticatedRequest,
   res: Response,
@@ -25,7 +20,7 @@ export function verifyTokenMiddleware(
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Attach decoded payload (e.g., { sub, email, roles })
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(401).json({ error: "Unauthorized: Invalid token" });

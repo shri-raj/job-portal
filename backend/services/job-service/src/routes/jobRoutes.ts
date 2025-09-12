@@ -17,7 +17,7 @@ import {
 const router = Router();
 
 router.post("/", verifyTokenMiddleware, hasRole(["recruiter"]), createJob);
-router.get("/", listJobs); // Public search/filter endpoint
+router.get("/", listJobs);
 router.put("/:jobId", verifyTokenMiddleware, hasRole(["recruiter"]), updateJob);
 router.delete(
   "/:jobId",

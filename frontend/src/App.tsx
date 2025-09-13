@@ -12,7 +12,7 @@ import UserProfile from "./pages/UserProfile";
 import MyProfile from "./pages/MyProfile";
 import CompanyProfile from "./pages/CompanyProfile";
 import AskAI from "./pages/AskAI";
-import CreateCompany from "./pages/CreateCompany"; // Import the new page
+import CreateCompany from "./pages/CreateCompany";
 
 function App() {
   return (

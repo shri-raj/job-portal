@@ -12,7 +12,6 @@ export async function createCompany(req: Request, res: Response) {
         .json({ error: "Invalid data", details: err.errors });
     }
     if (err.code === "P2002") {
-      // Handle unique constraint violation for company name
       return res
         .status(409)
         .json({ error: "A company with this name already exists." });

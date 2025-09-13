@@ -16,7 +16,7 @@ const CreateCompany: React.FC = () => {
         mutationFn: (newCompany: { name: string; description: string; website?: string; location: string }) =>
             api.post('/jobs/companies', newCompany),
         onSuccess: () => {
-            navigate('/create-job'); // Go to the create job page after success
+            navigate('/create-job');
         },
         onError: (err: any) => {
             setError(err.response?.data?.error || 'Failed to create company.');

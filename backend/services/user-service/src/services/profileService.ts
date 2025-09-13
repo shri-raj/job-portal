@@ -8,7 +8,6 @@ const profileSchema = z.object({
 });
 
 export async function getProfileByUserId(userId: string) {
-  // Find the user first to get their profileId
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: { profile: true },

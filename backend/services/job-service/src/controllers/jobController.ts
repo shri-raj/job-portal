@@ -35,7 +35,7 @@ export async function deleteJob(req: AuthenticatedRequest, res: Response) {
     const { jobId } = req.params;
     const userId = req.user.sub;
     await jobService.deleteJob(jobId, userId);
-    return res.status(204).send(); // 204 No Content is standard for successful deletion
+    return res.status(204).send();
   } catch (err: any) {
     if (err.message === "Job not found or user not authorized") {
       return res.status(403).json({ error: err.message });

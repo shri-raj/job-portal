@@ -18,7 +18,7 @@ export async function createCompany(data: unknown) {
 export async function findCompanyById(id: string) {
   return prisma.company.findUnique({
     where: { id },
-    include: { jobs: { orderBy: { createdAt: "desc" } } }, // Include jobs posted by the company
+    include: { jobs: { orderBy: { createdAt: "desc" } } },
   });
 }
 

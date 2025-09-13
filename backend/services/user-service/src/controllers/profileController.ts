@@ -8,7 +8,6 @@ export async function getMyProfile(req: AuthenticatedRequest, res: Response) {
     const profile = await profileService.getProfileByUserId(userId);
 
     if (!profile) {
-      // Return an empty object if profile doesn't exist, which is a valid state
       return res.status(200).json({});
     }
     return res.json(profile);

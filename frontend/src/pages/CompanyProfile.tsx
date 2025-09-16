@@ -12,7 +12,7 @@ const AICompanyChat: React.FC<{ companyId: string; companyName: string }> = ({ c
 
     const { mutate, isPending, error } = useMutation({
         mutationFn: async (newQuestion: string) => {
-            const { data } = await api.post('/api/rag/company-qa', { question: newQuestion, companyId });
+            const { data } = await api.post('/rag/company-qa', { question: newQuestion, companyId });
             return data;
         },
         onSuccess: (data) => {

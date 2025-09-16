@@ -15,7 +15,7 @@ const MyProfile: React.FC = () => {
         queryKey: ['my-profile'],
         queryFn: async () => {
             try {
-                const { data } = await api.get('/api/users/me/profile');
+                const { data } = await api.get('/users/me/profile');
                 return data;
             } catch (error: any) {
                 if (error.response?.status === 404 || Object.keys(error.response?.data).length === 0) {
@@ -35,7 +35,7 @@ const MyProfile: React.FC = () => {
     }, [profile]);
 
     const mutation = useMutation({
-        mutationFn: (updatedProfile: Partial<Profile>) => api.put('/api/users/me/profile', updatedProfile),
+        mutationFn: (updatedProfile: Partial<Profile>) => api.put('/users/me/profile', updatedProfile),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['my-profile'] });
             setMessage({ type: 'success', text: 'Profile updated successfully!' });

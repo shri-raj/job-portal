@@ -6,7 +6,7 @@ import userRouter from "./routes/userRoutes";
 import path from "path";
 dotenv.config({
   path: path.resolve(__dirname, "../.env"),
-  override: true,
+  // override: true,
 });
 const app = express();
 app.use(express.json());

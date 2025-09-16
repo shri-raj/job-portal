@@ -7,7 +7,7 @@ import cors from "cors";
 
 dotenv.config({
   path: path.resolve(__dirname, "../.env"),
-  override: true,
+  // override: true,
 });
 
 const app = express();

@@ -97,7 +97,7 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {jobs?.map((job) => (
+                    {Array.isArray(jobs) && jobs.map((job) => (
                         <JobCard key={job.id} job={job} onApply={handleApply} />
                     ))}
                 </div>

@@ -12,7 +12,7 @@ interface EditJobModalProps {
 const EditJobModal: React.FC<EditJobModalProps> = ({ job, isOpen, onClose, onSave }) => {
     const [title, setTitle] = useState(job.title);
     const [description, setDescription] = useState(job.description);
-    const [company, setCompany] = useState(job.company);
+    const [company, setCompany] = useState(job.company.name);
     const [location, setLocation] = useState(job.location);
     const [tags, setTags] = useState(job.tags.join(', '));
 

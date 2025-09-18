@@ -1,27 +1,24 @@
 import os
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-from azure.ai.inference import ChatCompletionsClient
-from azure.ai.inference.models import SystemMessage, UserMessage
-from azure.core.credentials import AzureKeyCredential
+import google.generativeai as genai
 
 load_dotenv()
 
 app = Flask(__name__)
 
-endpoint = "https://models.github.ai/inference"
-model = "openai/gpt-4"
-token = os.environ.get("GITHUB_TOKEN")
-
+api_key = os.environ.get("GOOGLE_API_KEY")
 client = None
-if token:
+model_name = "gemini-1.5-flash"
+
+if api_key:
     try:
-        client = ChatCompletionsClient(
-            endpoint=endpoint,
-            credential=AzureKeyCredential(token),
-        )
+        genai.configure(api_key=api_key)
+        client = genai.GenerativeModel(model_name)
     except Exception as e:
-        print(f"Failed to initialize ChatCompletionsClient: {e}")
+        print(f"Failed to initialize Google Generative AI Client: {e}")
+else:
+    print("GOOGLE_API_KEY not found. RAG service QA endpoint will be disabled.")
 
 documents = []
 data_path = os.environ.get("RAG_DATA_PATH", "./data")
@@ -53,10 +50,11 @@ def retrieve():
     scored.sort(key=lambda x: x["score"], reverse=True)
     return jsonify({"results": scored[:k]})
 
+@app.route("/company-qa", methods=["POST"])
 @app.route("/qa", methods=["POST"])
 def qa():
     if not client:
-        return jsonify({"error": "RAG service is not configured with an API token."}), 500
+        return jsonify({"error": "RAG service is not configured with a GOOGLE_API_KEY."}), 500
 
     data = request.get_json()
     question = data.get("question")
@@ -71,7 +69,11 @@ def qa():
         return jsonify({"answer": "I couldn't find any relevant documents to answer that question.", "sources": []})
 
     context = "\n\n".join([f"Source ({doc['id']}):\n{doc['text']}" for doc in matched_docs])
+    
+    system_prompt = "You are a helpful assistant for a job portal. Your goal is to answer questions based on the provided context about job descriptions and related topics."
     prompt = f"""
+    {system_prompt}
+
     Based on the following context, please answer the user's question.
     If the context does not contain the answer, say that you don't know.
 
@@ -83,16 +85,16 @@ def qa():
     """
 
     try:
-        response = client.complete(
-            messages=[
-                SystemMessage("You are a helpful assistant for a job portal. Your goal is to answer questions based on the provided context about job descriptions and related topics."),
-                UserMessage(prompt),
-            ],
-            model=model,
+        generation_config = genai.types.GenerationConfig(
             temperature=0.7,
-            top_p=1.0,
+            top_p=1.0
         )
-        answer = response.choices[0].message.content
+        response = client.generate_content(
+            prompt,
+            generation_config=generation_config
+        )
+        answer = response.text
+
         sources = [doc["id"] for doc in matched_docs]
         return jsonify({"answer": answer, "sources": sources})
     except Exception as e:

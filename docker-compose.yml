@@ -90,7 +90,7 @@ services:
     container_name: rag-service
     environment:
       - PORT=4004
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - JOB_SERVICE_URL=http://job-service:4003
     networks:
       - job-portal-net

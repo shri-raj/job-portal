@@ -14,6 +14,8 @@ One of the standout features is an AI-powered assistant that can answer question
 - **User Profiles**: Job seekers can build a personal profile with a professional summary, skills, and a link to their resume.
 - **AI Assistant (RAG)**: An "Ask AI" feature that uses the job and company data within the portal to provide intelligent, relevant answers to user questions.
 
+![System Architecture](systemArchitecture.png)
+
 ---
 
 ## Tech Stack
@@ -38,7 +40,7 @@ This project is split into a frontend application and several backend microservi
 - **ORM**: Prisma
 - **API Gateway**: A central gateway that directs traffic to the correct service.
 
----
+## ![db diagram](dbdiagram.png)
 
 ## Getting Started
 
